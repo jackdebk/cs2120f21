@@ -9,3 +9,5 @@ git push origin main                            # now make those changes to your
 ```
 
 It's very important to push your local changes to your GitHub repository regularly, so that you don't accidentally lose work should the Docker container storing your local clone be lost or damaged. We might also ask you to submit work by pushing it to your repository (which must be set to be a private GitHub repository).
+
+git remote --v
