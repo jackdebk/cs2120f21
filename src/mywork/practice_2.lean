@@ -68,8 +68,22 @@ begin
   apply iff.intro _ _,
   --forward
     assume p_or_q: P ∨ Q,
-    
+    have pthenqorp : P → Q ∨ P,
+      assume p : P,
+      exact or.inr p,
+    have qthenqorp : Q → Q ∨ P,
+      assume q : Q,
+      exact or.inl q,
+    exact or.elim p_or_q pthenqorp qthenqorp,
   --backward
+    assume q_or_p: Q ∨ P,
+    have qthenporq : Q → P ∨ Q,
+      assume q : Q,
+      exact or.inr q,
+    have pthenporq : P → P ∨ Q,
+      assume p : P,
+      exact or.inl p,
+    exact or.elim q_or_p qthenporq pthenporq,
 end
 
 example : ∀ (P Q : Prop), P ∧ Q ↔ Q ∧ P := 
@@ -105,44 +119,137 @@ the proof of P and proof of Q to create a proof of P and Q.
 
 -/
 
+--Work on
 example : ∀ (P Q R : Prop), P ∧ (Q ∨ R) ↔ (P ∧ Q) ∨ (P ∧ R) := 
 begin
   assume P Q R,
   apply iff.intro _ _,
   --forward
-    assume pqr1 : P ∧ (Q ∨ R),
-    have p: P := and.elim_left pqr1,
-    have q_or_r := and.elim_right pqr1,
-    
+    assume pandqorr : P ∧ (Q ∨ R),
+    have p : P := and.elim_left pandqorr,
+    have qorr : Q ∨ R := and.elim_right pandqorr,
+    have qorrthenpqpr : Q ∨ R → (P ∧ Q) ∨ (P ∧ R),
+      assume qorr,
+      have qthenpqpr : Q → (P ∧ Q) ∨ (P ∧ R),
+        assume q : Q,
+        exact or.inl (and.intro p q),
+      have rthenpqpr : R → (P ∧ Q) ∨ (P ∧ R),
+        assume r : R,
+        exact or.inr (and.intro p r),
+      exact or.elim qorr qthenpqpr rthenpqpr,
   --backward
 end
 
 example : ∀ (P Q R : Prop), P ∨ (Q ∧ R) ↔ (P ∨ Q) ∧ (P ∨ R) := 
 begin
+  assume P Q R,
+  apply iff.intro _ _,
+  --forward
+    assume porqandr : P ∨ (Q ∧ R),
+    apply and.intro _ _,
+    have pthenpq : P → (P ∨ Q),
+      assume p : P,
+      exact or.inl p,
+    have qrthenpq: (Q ∧ R) → (P ∨ Q),
+      assume qandr : Q ∧ R,
+      exact or.inr (and.elim_left qandr),
+    exact or.elim porqandr pthenpq qrthenpq,
+    have pthenpr : P → (P ∨ R),
+      assume p : P,
+      exact or.inl p,
+    have qrthenpr: (Q ∧ R) → (P ∨ R),
+      assume qandr : Q ∧ R,
+      exact or.inr (and.elim_right qandr),
+    exact or.elim porqandr pthenpr qrthenpr,
+  --backward
 end
 
 example : ∀ (P Q : Prop), P ∧ (P ∨ Q) ↔ P := 
 begin
+  assume P Q,
+  apply iff.intro _ _,
+  --forward
+    assume pandporq : P ∧ (P ∨ Q),
+    have p : P := and.elim_left pandporq,
+    exact p,
+  --backward
+    assume p : P,
+    have porq : P ∨ Q := or.inl p,
+    apply and.intro p porq,
 end
 
 example : ∀ (P Q : Prop), P ∨ (P ∧ Q) ↔ P := 
 begin
+  assume P Q,
+  apply iff.intro _ _,
+  --forward
+    assume porpandq: P ∨ (P ∧ Q),
+    have pp : P → P,
+    assume P,
+    exact P,
+    have pandqthenp : (P ∧ Q) → P,
+    assume pandq : P ∧ Q,
+    have p := and.elim_left pandq,
+    exact p,
+    show P,
+    from or.elim porpandq pp pandqthenp,
+  --backward
+    assume p : P,
+    apply or.inl _,
+    exact p,
 end
 
 example : ∀ (P : Prop), P ∨ true ↔ true := 
 begin
+  assume P,
+  apply iff.intro _ _,
+  --forward
+    assume port : P ∨ true,
+    exact true.intro,
+  --backward
+    assume t : true,
+    exact or.intro_right P true.intro,
 end
 
+--work on this
 example : ∀ (P : Prop), P ∨ false ↔ P := 
 begin
+  assume P,
+  apply iff.intro _ _,
+  --forward
+    assume porf : P ∨ false,
+    have notfalsethenp : ¬ false → P
+    
+  --backward
 end
 
 example : ∀ (P : Prop), P ∧ true ↔ P := 
 begin
+  assume P,
+  apply iff.intro _ _,
+  --forward
+    assume pandt : P ∧ true,
+    apply and.elim_left pandt,
+  --backward
+    assume p : P,
+    apply and.intro _ _,
+    exact p,
+    exact true.intro,
 end
 
+
+--work on this
 example : ∀ (P : Prop), P ∧ false ↔ false := 
 begin
+  assume P,
+  apply iff.intro _ _,
+  --forward
+    assume pandf : P ∧ false,
+    have f : false := and.elim_right pandf,
+    exact f,
+  --backward
+    assume f : false,
+    apply and.intro _ _,
 end
 
 
