@@ -59,32 +59,36 @@ begin
     exact P,
     exact P,
 end
+/-
+Proof: We assume that P is an arbitrary but specific proposition.
+Apply the introduction rule for iff to separate into a forward proof and backwards proof.
+Apply the introduction rule for implies assuming a proof of P ∧ P. Apply the left elimination rule for and
+on P ∧ P to create a proof of P. To prove it backwards, use the introduction rule for implies to assume a proof of P.
+Apply the introduction rule for and using the proof of P twice to create a proof of P ∧ P.
+-/
 
-
---work on this
 example : ∀ (P Q : Prop), P ∨ Q ↔ Q ∨ P := 
 begin
   assume P Q,
   apply iff.intro _ _,
   --forward
-    assume p_or_q: P ∨ Q,
-    have pthenqorp : P → Q ∨ P,
-      assume p : P,
-      exact or.inr p,
-    have qthenqorp : Q → Q ∨ P,
-      assume q : Q,
-      exact or.inl q,
-    exact or.elim p_or_q pthenqorp qthenqorp,
+    assume porq: P ∨ Q,
+    cases porq,
+      exact or.inr porq,
+      exact or.inl porq,
   --backward
-    assume q_or_p: Q ∨ P,
-    have qthenporq : Q → P ∨ Q,
-      assume q : Q,
-      exact or.inr q,
-    have pthenporq : P → P ∨ Q,
-      assume p : P,
-      exact or.inl p,
-    exact or.elim q_or_p qthenporq pthenporq,
+    assume qorp: Q ∨ P,
+    cases qorp,
+      exact or.inr qorp,
+      exact or.inl qorp,
 end
+/-Proof: Assume P and Q are propositions. Apply the introduction rule for ↔.
+Apply the introduction rule for →. Perform case analysis on P ∨ Q. For the case P ∨ Q : P,
+apply the introduction rule for or. For the case P ∨ Q : Q, apply the introduction
+rule for or. For the backward proof apply the introduction rule for →. Perform case analysis
+on Q ∨ P. For the case Q ∨ P : Q, apply the introduction rule for or. For the case Q ∨ P : P,
+apply the introduction rule for or.
+-/
 
 example : ∀ (P Q : Prop), P ∧ Q ↔ Q ∧ P := 
 begin
@@ -116,10 +120,8 @@ rule for and on the proof of Q and P to get a proof of Q.
 Apply the right elimination rule for and on the proof of Q and P
 to get a proof of P. Apply the introduction rule for and using 
 the proof of P and proof of Q to create a proof of P and Q.
-
 -/
 
---Work on
 example : ∀ (P Q R : Prop), P ∧ (Q ∨ R) ↔ (P ∧ Q) ∨ (P ∧ R) := 
 begin
   assume P Q R,
@@ -128,17 +130,27 @@ begin
     assume pandqorr : P ∧ (Q ∨ R),
     have p : P := and.elim_left pandqorr,
     have qorr : Q ∨ R := and.elim_right pandqorr,
-    have qorrthenpqpr : Q ∨ R → (P ∧ Q) ∨ (P ∧ R),
-      assume qorr,
-      have qthenpqpr : Q → (P ∧ Q) ∨ (P ∧ R),
-        assume q : Q,
-        exact or.inl (and.intro p q),
-      have rthenpqpr : R → (P ∧ Q) ∨ (P ∧ R),
-        assume r : R,
-        exact or.inr (and.intro p r),
-      exact or.elim qorr qthenpqpr rthenpqpr,
+    cases qorr,
+      exact or.inl (and.intro p qorr),
+      exact or.inr (and.intro p qorr),
   --backward
+    assume pqpr : P ∧ Q ∨ P ∧ R,
+    cases pqpr,
+      have p : P := and.elim_left pqpr,
+      exact and.intro p (or.inl (and.elim_right pqpr)),
+      have p : P := and.elim_left pqpr,
+      exact and.intro p (or.inr (and.elim_right pqpr)),
 end
+/-Proof: Assume that P, Q, and R are propositions. Apply the introduction rule for ↔.
+Apply the introduction rule for → to assume a proof of P ∧ (Q ∨ R). Apply the elimination rule
+for and to produce proofs of P and (Q ∧ R). Perform case analysis. Apply the introduction rule
+for or and the introduction rule for and for the two cases to prove that for both cases
+(P ∧ Q) ∨ (P ∧ R). For the backward proof, apply the introduction rule for →.
+Perform case analysis. For the case P ∧ Q, apply the elimination rule for ∧ to create a proof of P.
+Apply the introduction rule for ∧ using the proof of P, the introduction rule for ∨ and the elimination rule for ∧.
+For the case P ∧ R, apply the elimination rule for ∧ to create a proof of P. Apply the introduction rule for and using
+the proof of P, the introduction rule for ∨ and the elimination rule for ∧.
+-/
 
 example : ∀ (P Q R : Prop), P ∨ (Q ∧ R) ↔ (P ∨ Q) ∧ (P ∨ R) := 
 begin
@@ -162,7 +174,27 @@ begin
       exact or.inr (and.elim_right qandr),
     exact or.elim porqandr pthenpr qrthenpr,
   --backward
+    assume pqpr : (P ∨ Q) ∧ (P ∨ R),
+    have porq : P ∨ Q := and.elim_left pqpr,
+    have porr : P ∨ R := and.elim_right pqpr,
+    cases porq,
+      exact or.inl porq,
+      cases porr,
+        exact or.inl porr,
+        exact or.inr (and.intro porq porr),
 end
+/-Proof: Assume that P, Q, and R are arbitrary but specific propositions. Apply the introduction
+rule for ↔ to separate into a forward proof and a backwards proof. Use the introduction rule
+for → and the left introduction rule for ∨ to create a proof that P → (P ∨ Q).
+Use the introduction rule for →, the right introduction rule for ∨, and the left elimination rule
+for ∧ to create a proof of (Q ∧ R) → (P ∨ Q). Having shown that P → (P ∨ Q) and (Q ∧ R) → (P ∨ Q),
+we can use the elimination rule for ∨ to create a proof of P ∨ Q ∧ R → (P ∨ Q) ∧ (P ∨ R).
+To prove the backwards proposition, use the introduction rule for → and the elimination rules for
+∧ to separate the proposition into P ∨ Q and P ∨ R. Perform case analysis on P ∨ Q. In the case
+where P ∨ Q : P, use the left introduction rule for or. In the case where P ∨ Q : Q,
+perform case analysis on P ∨ R. In the case P ∨ R : P, apply the left introduction rule for ∨.
+In the case P ∨ R : R, apply the introduction rule for ∧ using Q and R.
+-/
 
 example : ∀ (P Q : Prop), P ∧ (P ∨ Q) ↔ P := 
 begin
@@ -177,27 +209,32 @@ begin
     have porq : P ∨ Q := or.inl p,
     apply and.intro p porq,
 end
-
+/-Proof: Assume that P and Q are arbitrary but specific propositions.
+Apply the introduction rule for ↔. For the forward proof, apply the introduction rule for
+→. Apply the elimination rule for and. For the backward proof, apply the introduction rule for →.
+Apply the introduction rule for ∨ to create a proof of P ∧ Q. Apply the introduction rule for and
+using the proof of P and the proof of P ∨ Q.
+-/
 example : ∀ (P Q : Prop), P ∨ (P ∧ Q) ↔ P := 
 begin
   assume P Q,
   apply iff.intro _ _,
   --forward
     assume porpandq: P ∨ (P ∧ Q),
-    have pp : P → P,
-    assume P,
-    exact P,
-    have pandqthenp : (P ∧ Q) → P,
-    assume pandq : P ∧ Q,
-    have p := and.elim_left pandq,
-    exact p,
-    show P,
-    from or.elim porpandq pp pandqthenp,
+    cases porpandq,
+      exact porpandq,
+      exact and.elim_left porpandq,
   --backward
     assume p : P,
-    apply or.inl _,
-    exact p,
+    exact or.inl p,
 end
+/-Proof: Assume P is a proposition. Apply the introduction rule for ↔.
+For the forward proof, apply the introduction rule for →, assuming a proof P ∨ (P ∧ Q).
+Perform case analysis on P ∨ (P ∧ Q). In the first case, we have a proof of P. In the second case,
+apply the elimination rule for ∧ on the proof of P ∨ (P ∧ Q). Because both cases prove P, we can use
+the elimination rule for ∨. For the backward proof, apply the introduction rule for →, assuming a proof of P.
+Apply the introduction rule for ∨ using the proof of P.
+-/
 
 example : ∀ (P : Prop), P ∨ true ↔ true := 
 begin
@@ -210,18 +247,31 @@ begin
     assume t : true,
     exact or.intro_right P true.intro,
 end
+/-Proof: Assume P is a proposition. Apply the introduction rule for ↔.
+For the forward proof, apply the introduction rule for → to assume a proof of P ∨ true.
+Apply the introduction rule for true to prove true. For the backward proof, assume a proof of true.
+Apply the introduction rule for or using the introduction rule for true to prove P ∨ true.
+-/
 
---work on this
 example : ∀ (P : Prop), P ∨ false ↔ P := 
 begin
   assume P,
   apply iff.intro _ _,
   --forward
     assume porf : P ∨ false,
-    have notfalsethenp : ¬ false → P
-    
+    cases porf,
+      exact porf,
+      exact false.elim porf,
   --backward
+    assume p : P,
+    exact or.inl p,
 end
+/-Proof: Assume that P is an arbitrary but specific proposition. Apply the introduction rule for ↔.
+Apply the introduction rule for → to assume P ∨ false. Perform case analysis. In the first case,
+we have a proof of P. In the second case, apply the elimination rule for false to show that the case
+cannot exist. For the backwards proof, apply the introduction rule for → to assume a proof of P.
+Apply the introduction rule for or using the proof of P to prove P ∨ false.
+-/
 
 example : ∀ (P : Prop), P ∧ true ↔ P := 
 begin
@@ -236,9 +286,13 @@ begin
     exact p,
     exact true.intro,
 end
+/-Proof: Assume that P is an arbitrary but specific proposition. Apply the introduction rule
+for ↔. For the forward proof, apply the introduction rule for →. Apply the elimination rule for
+∧ to create a proof of P. For the backward proof, apply the introduction rule for →. Apply
+the introduction rule for ∧ using the proof of P and the introduction rule for true to create a proof of
+P ∨ true.
+-/
 
-
---work on this
 example : ∀ (P : Prop), P ∧ false ↔ false := 
 begin
   assume P,
@@ -246,10 +300,19 @@ begin
   --forward
     assume pandf : P ∧ false,
     have f : false := and.elim_right pandf,
-    exact f,
+    cases f,
   --backward
     assume f : false,
     apply and.intro _ _,
+    exact false.elim f,
+    cases f,
 end
+/-
+Proof: Assume that P is an arbitrary but specific proposition. Apply the introduction rule for ↔.
+For the forward proof, apply the introduction rule for →. Apply the elimination rule for and to create a proof of false.
+Perform case analysis on f, to show that there are no cases where false can be true. For the backwards proof,
+apply the introduction rule for → to create a proof f : false. Apply the introduction rule for ∧. Apply the elimination rule for false
+to show a contradiction, so we cannot have a proof of P. Perform case analysis on f to show that there are no cases where we have a proof of false.
+-/
 
 
