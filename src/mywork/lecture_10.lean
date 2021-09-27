@@ -176,6 +176,12 @@ SOME THEOREMS INVOLVING FALSE AND NEGATION
 
 theorem no_contradiction : ∀ (P : Prop), ¬(P ∧ ¬P) :=
 begin
+  assume P,
+  assume pandnot : P ∧ ¬ P,
+  have p : P := and.elim_left pandnot,
+  have np : ¬ P := and.elim_right pandnot,
+  have f := np p,
+  exact f,
 end
 
 /-
