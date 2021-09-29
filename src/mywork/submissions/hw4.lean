@@ -1,3 +1,8 @@
+/-
+Jack de Bruyn Kops
+hae3ra
+-/
+
 -- 1
 example : 0 ≠ 1 :=
 begin
@@ -189,8 +194,12 @@ end
 Formally state and prove the proposition that
 not every natural number is equal to zero.
 -/
-lemma not_all_nats_are_zero : ∀ (N : ℕ), :=
+lemma not_all_nats_are_zero : ∃ (n : ℕ), (n ≠ 0) :=
 begin
+  apply exists.intro 1,
+  assume p : 1 = 0,
+  have p1 : 1 = 1 := eq.refl 1,
+  contradiction,
 end 
 
 -- 11. equivalence of P→Q and (¬P∨Q)
