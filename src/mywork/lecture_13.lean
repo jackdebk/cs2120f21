@@ -51,6 +51,8 @@ then shows for sure that that is so.
 
 example : ∃ (b : bool), b && tt = ff :=
 begin
+  apply exists.intro ff,
+  exact rfl,
 end
 
 example : (exists (b : bool), b && tt = ff) → (∃ (b : bool), true) :=
@@ -87,24 +89,43 @@ example :
   (∃ (b : Ball), Red b ∧ Green b) → 
   (∃ (b : Ball), Red b) :=
 begin
+  assume h,
+  cases h with b rg,
+  have br : Red b := and.elim_left rg,
+  exact exists.intro b br,
 end 
 
 example : 
   (∃ (b : Ball), Red b ∨ Green b) → 
   (∃ (b : Ball), Green b ∨ Red b) :=
 begin
+  assume h,
+  cases h with b rg,
+    have gorr : Green b ∨ Red b,
+    cases rg,
+      exact or.inr rg,
+      exact or.inl rg,
+    exact exists.intro b gorr,
 end 
 
 example : 
   (∃ (b : Ball), Red b ∨ Green b) → 
   (∃ (b : Ball), Red b) :=
 begin
+  assume h,
+  cases h with b rg,
+    apply exists.intro b _,
+    cases rg,
+      exact rg,
 end 
 
 example : 
     (∃ (b : Ball), Red b) → 
     (∃ (b : Ball), Red b ∨ Green b) := 
 begin
+  assume h,
+  cases h with b r,
+  exact exists.intro b (or.inl r),
 end 
 
 /-
@@ -118,8 +139,13 @@ axioms
 
 example : 
   (∃ (p1 : Person), ∀ (p2 : Person), Likes p2 p1) → 
-  (∀ (p1 : Person), ∃ (p2 : Person), Likes p1 p2) :=
+  (∀ (e : Person), ∃ (s : Person), Likes e s) :=
 begin
+  assume h,
+  assume e,
+  cases h with p pf,
+    apply exists.intro p,
+    exact pf (e),
 end
 
 /-
@@ -128,17 +154,16 @@ English language sentences.
 -/
 
 -- Everyone likes him or herself
-
+-- ∀ (p1 : Person), Likes p1 p1,
 -- Someone doesn't like him or herself
-
+-- ∃ (p1 : Person), ¬ Likes p1 p1,
 -- There is someone likes someone else
-
+-- ∃ (p1 p2: Person), Likes p1 p2
 -- No one likes anyone who dislikes them
 
 -- Everyone likes anyone who is nice
 
 -- No one likes anyone who is not nice
-
 /-
 If everyone who's nice likes someone, then
 there is someone whom everyone who is nice 
