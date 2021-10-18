@@ -21,7 +21,7 @@ Let's see this idea in action.
 We'll represent a *property* objects of
 a  type, α, as a *predicate* on α values.
 (Using α is cooler than using T as a type
-valued variable.) 
+valued variable.)
 
 Here we'll juse use our simple evenness
 one-place predicate on natural numbers. 
