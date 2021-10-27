@@ -45,14 +45,27 @@ example :
 /-
 What does this propositon say? Explain it in
 plain English. Here's a start: "If there's a 
-function that maps/takes every α value that ... 
--- your completed English rendition here:
+function that maps/takes every α value that has
+property p to a β value that has property q, then if
+there exists an α value with property p, then there exists
+a β value with property q.
 -/
 
 
 -- Give your formal proof here
 begin
-  _
+  assume m n,
+  cases m,
+  cases n,
+  apply exists.intro,
+  apply m_h n_w,
+  exact n_h,
 end
   
-
+/-
+Assuming that we have two types, α and β and there exists a
+function f that produces a β value with property q from an α
+value with property p, and that we have an α value a with property p,
+we apply f to a to produce a β value with property q, therefore there
+exists a β value with property q.
+-/

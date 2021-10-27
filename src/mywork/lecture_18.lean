@@ -284,8 +284,8 @@ idea of subtraction, where, for example,
 5 - 2 means 5 take away 2.
 -/
 
-def diff (s t : set α) : set α :=
-{ a | a ∈ s ∧ a ∉ t }
+def diff (s t : set α) : (set α) :=
+{v | v ∈ s ∧ v ∉ t}
 
 /-
 Powerset

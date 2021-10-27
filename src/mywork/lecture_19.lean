@@ -11,19 +11,17 @@ def evens : set ℕ := { n | n%2 = 0}
 
 example : ({ 0, 2 } : set ℕ) ⊆ evens :=
 begin
-  /-
+  
   show ∀ n, n = 0 ∨ n = 2 → n ∈ evens,
-  -/
+  
   assume n,
   assume h,
   cases h,
   -- case: n = 0
   rw h,
-  /-
   unfold evens,
   show {n : ℕ | n % 2 = 0} 0,
-  show 0 % 0 = 0,
-  -/
+  show 0 % 2 = 0,
   exact rfl,
   -- case: n = 2
   cases h,
