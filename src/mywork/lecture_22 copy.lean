@@ -154,3 +154,17 @@ begin
   rw xy,
   exact yz,
 end
+
+/-
+Proof:
+To prove that cong_mod_nat is an equivalence relation,
+we must prove that cong_mod_nat is reflexive, symmetric, and transitive.
+To prove reflexivity, assume an arbitrary natural number x, then x%n = x%n
+is clearly true because of the reflexivity of equality. To prove symmetry,
+we assume two arbitrary natural numbers x and y, and assume that x%n = y%n.
+To prove that y%n = x%n, rewrite y%n to x%n using x%n = y%n to create x%n = x%n,
+which is clearly true because of the reflexivity of equality. To prove
+transitivity, assume three arbitrary natural numbers x y z, and that x%n = y%n
+and y%n = z%n. Then, to prove that x%n = z%n, rewrite using x%n = y%n to create
+y%n = z%n, which is an assumption of the proof.
+-/
