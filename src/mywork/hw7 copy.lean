@@ -182,26 +182,19 @@ it's not.
 example : anti_symmetric divides := 
 begin
   unfold anti_symmetric divides,
-  have tr : transitive divides,
-    unfold transitive divides,
-    assume x y z,
-    assume h,
-    assume h1,
-    cases h,
-    cases h1,
-    apply exists.intro (h_w*h1_w),
-    rw h1_h,
-    rw h_h,
-    ring,
   assume x y,
   assume h1,
   assume h2,
   cases h1 with k p1,
   cases h2 with j p2,
   rw p1,
-  have k1xy : 1/k = x/y,
-    have kxy : 1 = k*x/y,
-      ring_nf,
+  have p1p2 : y = k*(j*y),
+    rw ←p2,
+    exact p1,
+  have k1 : k = 1 := sorry,
+  have j1 : j = 1 := sorry,
+  rw k1,
+  ring,
 end
 
 
@@ -239,12 +232,13 @@ begin
 end
 
 -- C
-example : transitive r → ¬ symmetric r → ¬ irreflexive r :=
+example : (∃ (b : β), true) → transitive r → ¬ symmetric r → ¬ irreflexive r :=
 begin
   unfold transitive symmetric irreflexive,
-  assume t ns,
+  assume e t ns,
   assume i,
-  have ef : ∃ (x y : β), r x y → ¬ r x y := ns,
+  cases e with x h,
+  have nrxx : ¬ r x x := i x,
 end
 
 

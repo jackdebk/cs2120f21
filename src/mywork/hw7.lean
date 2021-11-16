@@ -95,7 +95,7 @@ begin
   assume s s1 s2,
   assume s1p s2p,
   assume s1subs2 s2subs1,
-
+  
 end
 
 
@@ -121,8 +121,8 @@ example : ∀ n, divides 1 n :=
 begin
   assume n,
   unfold divides,
-  apply exists.intro n _,
-  
+  apply exists.intro n,
+  ring,
 end
 
 -- B. For any n, n divides n
@@ -178,7 +178,6 @@ begin
   cases h1 with k1 p1,
   cases h2 with k2 p2,
   rw p1,
-
 end
 
 
@@ -212,7 +211,7 @@ begin
   assume ryx,
   have rxx : r x x := t rxy ryx,
   have nrxx : ¬ r x x := i x,
-   contradiction,
+  contradiction,
 end
 
 -- C
