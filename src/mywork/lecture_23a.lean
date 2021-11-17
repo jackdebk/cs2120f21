@@ -1,64 +1,68 @@
-import .lecture_23a
+import .lecture_22
+import data.set
 
+/-
+ADDITIONAL PROPERTIES OF RELATIONS
+-/
+
+namespace relations
+
+section relation
+
+/-
+Define relation, r, as two-place predicate on 
+a type, β, with notation, x ≺ y, for (r x y). 
+-/
 variables {α β : Type}  (r : β → β → Prop)
 local infix `≺`:50 := r  
 
+-- special relations on an arbitrary type, α 
+def empty_relation := λ a₁ a₂ : α, false
+def full_relation := λ a₁ a₂ : α, true
+def id_relation :=  λ a₁ a₂ : α, a₁ = a₂ 
+
+-- Analog of the subset relation but now on binary relations
+-- Note: subrelation is a binary relation on binary relations
+def subrelation (q r : β → β → Prop) := ∀ ⦃x y⦄, q x y → r x y
+
 /-
-CLOSURE OPERATIONS ON RELATIONS
+Additional properties of relations
+-/
+
+def strongly_connected := ∀ x y, x ≺ y ∨ y ≺ x
+def total := @strongly_connected β 
+/-
+Note: we will use "total" later to refer to a different
+property of relations that also satisfy the constraints
+needed to be "functions."  To avoid ambiguity we will
+prefer the term, "strongly_connected," over "total."
+-/
+
+def anti_reflexive := ∀ x, ¬ x ≺ x
+def irreflexive := anti_reflexive r -- sometimes used
+def anti_symmetric := ∀ ⦃x y⦄, x ≺ y → y ≺ x → x = y
+def asymmetric := ∀ ⦃x y⦄, x ≺ y → ¬ y ≺ x
+
+/-
+CLOSURE operations on relations.
 
 Given a relation, r, the reflexive, symmetric, or
-transitive closure of r is "the smallest relation that
+transitive closure of r is the smallest relation that
 (1) contains r, and (2) contains any additional pairs
 needed to make the resulting relation reflexive, or
-symmetric, or transitive, respectively." By smallest
-we mean a relation that contains r and that has the
-fewest additional pairs needed to obtain the given
-property, with no other unnecessary pairs added in. 
-
-The reflexive, symmetric, transitive closure of 
-r is the smallest relation that contains r and 
-has all three properties. Note that the resulting
-relation will be an equivalence relation. 
+symmetric, or transitive, respectively. The reflexive,
+symmetric, transitive closure of r is the smallest
+relation (which means *no* unnecessary added pairs)
+that contains r and has all three properties. Note
+that the resulting relation will be an equivalence
+relation. The meaning of this is basically that if
+anything is connecting to somethiing else, they will
+end up in the same "equivalence class." We'll see a
+picture.
 -/
 
--- REFLEXIVE CLOSURE
-
-/-
-A pair (a, b) is in the reflexive closure of r if
-(a, b) is in r or if (a = b).
--/
-def reflexive_closure := 
-  λ (a b : β), (r a b) ∨ (a = b)
-
-/-
-Exercise: what pairs are in the reflexivee closure of
-the following relation, r, over the set {0, 1, 2}?
-
-r = {}
--/
-
--- SYMMETRIC CLOSURE
-
-/-
-A pair (a, b) is in the symmetric closure of r if 
-(a, b) is in r or if (b, a) is i r.
--/
-def symmetric_closure := 
-  λ (a b : β), (r a b) ∨ (r b a)
-
-/-
-Consider a set, s = {0, 1, 2, 3} and a binary relation
-on s, r = {(0,1),(3,2)}. What pairs are in the symmetric
-closure, (sc r), of r. Clearly (0,1) and (3,2) are in
-(sc r), because they are in r. But are (1,0) and (2,3) in
-sc r, as we expect? Let's apply symmetric_closure to a=1
-b=0. This pair is defined to be in the *closure* if the
-resulting proposition is true. The proposition is (a,b)
-is in r or (b, a) is in r. Clearly (a=1,b=0) is not in r,
-but (b=0,a=1) is in r, so (a=1,b=0) is (defined to be)
-in (sc r). In a nutshell, the symmetric closure includes
-an edge/pair if either it is in r, or its reverse is r.
--/
+def reflexive_closure := λ (a b : β), (r a b) ∨ (a = b)
+def symmetric_closure := λ (a b : β), (r a b) ∨ (r b a)
 
 /-
 Let's look examples. What's in the reflexive closure
@@ -68,8 +72,6 @@ of a picture, so let's draw this relation and see in
 graphical terms what it means to compute its reflexive
 closure.
 -/
-
--- TRANSITIVE CLOSURE
 
 /- 
 The definitions of the reflexive and symmetric closures
@@ -118,14 +120,9 @@ and c are related in (tc r) then a and c must also
 be related in r. For any length-2 "path" from a to c
 (via b), then there's a direct connection: (a,c) ∈ r. 
 -/
-
-namespace hidden 
-
 inductive tc {α : Type} (r : α → α → Prop) : α → α → Prop
 | base  : ∀ a b, r a b → tc a b
 | trans : ∀ a b c, tc a b → tc b c → tc a c
-
-end hidden
 
 /-
 Here's a possibly surprising fact: the transitive 
@@ -143,8 +140,8 @@ computer science. That suggests something about teaching
 first-order logic as a first logic for computer science:
 there's real reason to doubt that it's the best choice.
 The higher-order predicate logic of Lean and similar
-modern proof assistants is strictly more expressive,
-and that makes it easier (even possible) to express ideas
-in high-order predicate logic than first-order predicate
-logic.
+modern proof assistants is strictly more expressive.
 -/
+end relation
+end relations
+
