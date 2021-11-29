@@ -57,6 +57,7 @@ not others.
 Formally define what it means for a relation
 to be a well-order.
 -/
+def well_order : total order r,
 
 example : 
   function r → 
